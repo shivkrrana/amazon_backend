@@ -50,9 +50,14 @@ router.post(
                 "errors": errors.array()
             });
         }
+
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
         return res.status(200).json({
             "status": true,
-            "data": req.body
+            "data": req.body,
+            "hashedPassword": hashedPassword
         });
     }
 );
