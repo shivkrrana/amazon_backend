@@ -7,7 +7,9 @@ const cors = require("cors");
 const morgan = require("morgan");
 const port = process.env.PORT;
 
+//db connection
 
+require("./database");
 //middleware
 app.use(cors());
 app.use(morgan("dev"));
