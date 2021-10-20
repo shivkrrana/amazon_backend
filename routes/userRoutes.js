@@ -24,8 +24,11 @@ router.get(
             "status": true,
             "message": "User default Router"
         });
+
     }
 );
+
+
 
 // user Register Route
 //access: public
@@ -51,13 +54,44 @@ router.post(
             });
         }
 
-        const salt = bcrypt.genSaltSync(10);
-        const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
-        return res.status(200).json({
-            "status": true,
-            "data": req.body,
-            "hashedPassword": hashedPassword
+
+        User.findOne({ email: req.body.email }).then(user => {
+            // check email exists or not
+            if (user) {
+                return res.status(200).json({
+                    "status": false,
+                    "message": "User email already exists"
+                });
+            } else {
+                const salt = bcrypt.genSaltSync(10);
+                const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
+                const newUser = new User({
+                    email: req.body.email,
+                    username: req.body.username,
+                    password: hashedPassword
+                });
+
+                newUser.save().then(result => {
+                    return res.status(200).json({
+                        "status": true,
+                        "user": result
+                    })
+                }).catch(error => {
+                    return res.status(502).json({
+                        "status": false,
+                        "error": error
+                    })
+                });
+            }
+        }).catch(error => {
+            return res.status(502).json({
+                "status": false,
+                "error": error
+            });
+
+
         });
     }
 );
