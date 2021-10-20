@@ -171,10 +171,23 @@ router.post(
                         });
                     }
 
+                    // json web token
 
+                    let token = jwt.sign({
+                            id: user._id,
+                            email: user.email
+
+                        },
+                        token_key, {
+                            expiresIn: 3600
+                        }
+                    );
+                    // if login sucess
                     return res.status(200).json({
                         "status": true,
-                        "message": "User login success"
+                        "message": "User login success",
+                        "token": token,
+                        "user": user
                     });
                 }
             }).catch((error) => {
